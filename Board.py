@@ -9,7 +9,7 @@ class board:
 
 
     def makeBoard(self) -> list[list[piece]]:
-        emptyBoard = [[piece for _ in range(8)] for _ in  range(8)]
+        emptyBoard = [[piece() for _ in range(8)] for _ in  range(8)]
         emptyBoard[3][3].color = 'W'
         emptyBoard[3][4].color = 'B'
         emptyBoard[4][3].color = 'B'
@@ -27,5 +27,5 @@ class board:
     def __repr__(self) -> str:
         return str(self)
 
-Board = board
+Board = board()
 print(Board)
