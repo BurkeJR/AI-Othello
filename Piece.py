@@ -1,12 +1,16 @@
 
 class piece:
-    def __init__(self):
+    def __init__(self, index):
         self.occupied = False
         self.white = False
         self.black = False
+        self.location: tuple(int, int) = index
 
     def __str__(self):
         return self.color
+    
+    def __eq__(self, other):
+        return self.color == other
 
 
     @property
