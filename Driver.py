@@ -5,13 +5,7 @@ import copy
 def main():
     gameBoard: board = board()
 
-
-
-    while True:
-        gameBoard = minimax(gameBoard)
-
-        if gameBoard.isFull:
-            break
+    print(gameBoard)
 
 
     boardList: list[board] = list()
