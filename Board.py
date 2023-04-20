@@ -2,12 +2,14 @@ from Piece import piece
 
 
 class board:
-    def __init__(self):
+    def __init__(self, blank = False):
         """8x8 board with starting pieces of
         W B
         B W"""
-
-        self.gameBoard: list[list[piece]] = self.makeBoard()
+        if blank:
+            self.gameBoard = [[piece((row, col)) for col in range(8)] for row in range(8)]
+        else:
+            self.gameBoard: list[list[piece]] = self.makeBoard()
         self.currentPlayer = 'W'
 
 
@@ -26,7 +28,7 @@ class board:
             return False
         return True
     
-    def getFlippableTiles(self, tile: piece, rowStart: int, colStart: int):
+    def getFlipTiles(self, tile: piece, rowStart: int, colStart: int):
         """Takes a tile on the board, and checks to see if there are any spots around it that can be flipped.
         Returns False if tile cannot be flipped, else returns list of tiles that would be flipped"""
         if self.gameBoard[rowStart][colStart] != "*":
@@ -41,7 +43,7 @@ class board:
         else:
             otherPlayerColor = 'W'
 
-        flippableTiles: list[tuple] = list()
+        changeableTiles: set[tuple] = set()
         
         for rowIncrement, colIncrement in [(0,1), (1,1), (1,0), (0, -1), (-1,-1), (-1,0), (-1,1), (1,-1)]:
             row, col = rowStart, colStart
@@ -59,24 +61,24 @@ class board:
                     row -= rowIncrement
                     col -= colIncrement
                     if row == rowStart and col == colStart:
-                        flippableTiles.append((row,col))
+                        changeableTiles.add((row,col))
                         break
-                    flippableTiles.append((row,col))
+                    changeableTiles.add((row,col))
 
         self.gameBoard[rowStart][colStart] = piece((rowStart,colStart))
 
-        if len(flippableTiles) > 0:
-            return flippableTiles
+        if len(changeableTiles) > 0:
+            return changeableTiles
         return False
 
 
-    def getAllPlayableSpots(self) -> list[list[tuple]]:
-        allPlayableSpots: list[list[tuple]] = list()
+    def getAllPlayableSpots(self) -> list[set[tuple]]:
+        allPlayableSpots: list[set[tuple]] = list()
 
         for row in self.gameBoard:
             for val in row:
                 tileRow, tileCol = val.location
-                playableTile = self.getFlippableTiles(val, tileRow, tileCol)
+                playableTile = self.getFlipTiles(val, tileRow, tileCol)
 
                 if not playableTile:
                     continue
@@ -100,5 +102,8 @@ class board:
         return str(self)
     
     def isFull(self):
-        return self.gameBoard.count('*') == 0
+        for row in self.gameBoard:
+            for val in row:
+                if val == '*':
+                    return False
     
