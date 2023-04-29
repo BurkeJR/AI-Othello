@@ -3,7 +3,6 @@ from Heuristic import count
 import copy
 
 
-
 class aiDriver():
     def __init__(self, blackAI, whiteAI, MAX_DEPTH = 4) -> None:
         self.blackAI = blackAI
@@ -15,7 +14,8 @@ class aiDriver():
         bestBoard = board(blackAI=self.blackAI, whiteAI=self.whiteAI)
 
         while bestBoard.continueGame:
-            bestBoard = self.minimax(bestBoard, 0)
+            bestBoard = self.minimax(bestBoard, 0, -10000, 10000)
+            print(bestBoard)
             stringBuilder += str(bestBoard)
             stringBuilder += '\n\n'
     
@@ -23,7 +23,7 @@ class aiDriver():
 
         return stringBuilder
 
-    def minimax(self, game: board, depth) -> board:
+    def minimax(self, game: board, depth, alpha, beta) -> board:
         if depth == self.MAX_DEPTH:
             return game
 
@@ -36,29 +36,37 @@ class aiDriver():
                 game.currentPlayer = 'B'
             else:
                 game.currentPlayer = 'W'
-            return self.minimax(game, depth + 1)
+            return self.minimax(game, depth + 1, alpha, beta)
     
         if game.currentPlayer == 'B':
-            max = -10000
+            maxVal= -10000
             bestBoard = game
             for b in self.derivedBoards(game):
                 b.currentPlayer = 'W'
-                best = self.minimax(b,depth + 1)
+                best = self.minimax(b,depth + 1, alpha, beta)
                 val = game.blackAI.evaluate(best)
-                if val > max:
-                    max = val
+                if val > maxVal:
+                    maxVal = val
                     bestBoard = best
+                if maxVal > alpha:
+                    alpha = maxVal
+                if beta <= alpha:
+                    break
             return bestBoard
         else:
-            min = 10000
+            minVal = 10000
             bestBoard = game
             for b in self.derivedBoards(game):
                 b.currentPlayer = 'B'
-                best = self.minimax(b,depth + 1)
+                best = self.minimax(b,depth + 1, alpha, beta)
                 val = game.whiteAI.evaluate(best)
-                if val < min:
-                    min = val
+                if val < minVal:
+                    minVal = val
                     bestBoard = best
+                if minVal < beta:
+                    beta = minVal
+                if beta <= alpha:
+                    break
             return bestBoard
 
     def derivedBoards(self, game: board) -> list[board]:

@@ -1,4 +1,5 @@
 from Piece import piece
+import copy
 
 
 class board:
@@ -118,23 +119,15 @@ class board:
         return True
                 
     def isWon(self):
-        countAll = 0
-        countW = 0
-        countB = 0
-        for row in self.gameBoard:
-            for val in row:
-                if val == 'W':
-                    countAll += 1
-                    countW += 1
-                elif val == 'B':
-                    countAll += 1
-                    countB += 1
-
-        if countW == countAll:
-            return True
-        if countB == countAll:
-            return True
+        game = copy.deepcopy(self)
+        game.currentPlayer = 'W'
+        if game.noMoves():
+            game.currentPlayer = 'B'
+            if game.noMoves():
+                return True
         return False
+
+        
         
     def noMoves(self):
         for spots in self.getAllPlayableSpots():

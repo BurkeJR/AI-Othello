@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import copy
 
 def count(game, color):
         count = 0
@@ -22,6 +23,9 @@ class coinParity(heuristic):
         total = maxCount + minCount
 
         return ((maxCount - minCount) / total) * 100
+    
+    def __str__(self) -> str:
+        return "Coin Parity"
     
 class cornersCaptured(heuristic):
     def heldCorners(self, board, color) -> int:
@@ -67,3 +71,70 @@ class cornersCaptured(heuristic):
         if total != 0:
             return ((maxCornerVal - minCornerVal) / total) * 100
         return 0
+    
+    def __str__(self) -> str:
+        return "Corners Captured"
+    
+class mobility(heuristic):
+    def evaluate(self, board) -> int:
+        maxCount = self.numMoves(board, 'B')
+        maxCount += .25 * self.emptySpaces(board, 'B')
+
+        minCount = self.numMoves(board, 'W')
+        minCount += .25 * self.emptySpaces(board, 'W')
+
+        total = maxCount + minCount
+
+        if total == 0:
+            return 0
+
+        return ((maxCount - minCount) / total) * 100
+
+    def numMoves(self, board, color) -> int:
+        board = copy.deepcopy(board)
+        board.currentPlayer = color
+        count = 0
+        for spot in board.getAllPlayableSpots():
+            if len(spot) == 1: continue
+            count += 1
+        return count
+    
+    def emptySpaces(self, board, color) -> int:
+        count = 0
+        grid = copy.deepcopy(board).gameBoard
+        for gridRow in grid:
+            for val in gridRow:
+                (row, col) = val.location
+                if grid[row][col] == color:
+                    count += self.empty(row, col, grid)
+
+        return count
+    
+    def empty(self, row, col, grid):
+        count = 0
+
+        if row != 0:
+            if grid[row-1][col] == '*': count+=1
+            if col != 0:
+                if grid[row - 1][col - 1] == '*': count+=1
+            if col != 7:
+                if grid[row - 1][col + 1] == '*': count+=1
+        if row !=7:
+            if grid[row+1][col] == '*': count+=1
+            if col != 0:
+                if grid[row+1][col-1] == '*': count+=1
+            if col != 7:
+                if grid[row+1][col+1] == '*': count+=1
+        if col != 0:
+            if grid[row][col-1] == '*': count+=1
+        if col != 7:
+            if grid[row][col+1] == '*': count+=1
+
+        return count
+    
+    def __str__(self) -> str:
+        return "Mobility"
+
+    
+            
+        
