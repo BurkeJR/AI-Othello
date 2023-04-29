@@ -101,7 +101,7 @@ class board:
     
     
     def __str__(self):
-        stringBuilder: str = "A B C D E F G H\n"
+        stringBuilder: str = "  A B C D E F G H\n"
         count = 1
         for row in self.gameBoard:
             stringBuilder += str(count) + ' '

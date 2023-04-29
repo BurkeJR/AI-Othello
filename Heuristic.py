@@ -1,14 +1,13 @@
 from abc import ABC, abstractmethod
-from Board import board
 
 class heuristic(ABC):
 
     @abstractmethod
-    def evaluate(self, board: board) -> int:
+    def evaluate(self, board) -> int:
         pass
 
 class coinParity(heuristic):
-    def count(self, game: board, color):
+    def count(self, game, color):
         count = 0
         for row in game.gameBoard:
             for val in row:
@@ -17,7 +16,7 @@ class coinParity(heuristic):
         return count
 
 
-    def evaluate(self, board: board) -> int:
+    def evaluate(self, board) -> int:
 
         maxCount = self.count(board, 'B')
         minCount = self.count(board, 'W')

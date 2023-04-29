@@ -1,9 +1,11 @@
 from Board import board
-from Piece import piece
+from Heuristic import coinParity
 import copy
 
 def main():
-    bestBoard: board = board()
+    blackAI = coinParity()
+    whiteAI = coinParity()
+    bestBoard: board = board(blackAI=blackAI, whiteAI=whiteAI)
     
 
     while bestBoard.continueGame:
