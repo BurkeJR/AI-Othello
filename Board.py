@@ -1,9 +1,8 @@
 from Piece import piece
-from AI import ai
 
 
 class board:
-    def __init__(self, blackAI: ai = None, whiteAI: ai = None):
+    def __init__(self, blackAI = None, whiteAI = None):
         """8x8 board with starting pieces of
         W B
         B W"""

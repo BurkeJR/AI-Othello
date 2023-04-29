@@ -1,13 +1,6 @@
 from abc import ABC, abstractmethod
 
-class heuristic(ABC):
-
-    @abstractmethod
-    def evaluate(self, board) -> int:
-        pass
-
-class coinParity(heuristic):
-    def count(self, game, color):
+def count(game, color):
         count = 0
         for row in game.gameBoard:
             for val in row:
@@ -15,17 +8,23 @@ class coinParity(heuristic):
                     count += 1
         return count
 
+class heuristic(ABC):
 
+    @abstractmethod
+    def evaluate(self, board) -> int:
+        pass
+
+class coinParity(heuristic):
     def evaluate(self, board) -> int:
 
-        maxCount = self.count(board, 'B')
-        minCount = self.count(board, 'W')
+        maxCount = count(board, 'B')
+        minCount = count(board, 'W')
         total = maxCount + minCount
 
         return ((maxCount - minCount) / total) * 100
     
 class cornersCaptured(heuristic):
-    def heldCorners(self, board, color):
+    def heldCorners(self, board, color) -> int:
         count = 0
         if board.gameBoard[0][0] == color:
             count += 1
@@ -37,9 +36,8 @@ class cornersCaptured(heuristic):
             count+=1
         return count
 
-    def closeCorners(self, board, color):
-        """Evaluates whether player of color color holds any tiles nearby to corners
-        Since this value is not desireable, it receives a negative weight"""
+    def closeCorners(self, board, color) -> int:
+        """Evaluates whether player of color color holds any tiles nearby to corners"""
         count = 0
         grid = board.gameBoard
         
@@ -62,10 +60,9 @@ class cornersCaptured(heuristic):
         return count
 		    
     def evaluate(self, board) -> int:
-        maxCornerVal = self.heldCorners(board, 'B') + (self.closeCorners(board, 'W'))
-        minCornerVal = self.heldCorners(board, 'W') + (self.closeCorners(board, 'B'))
+        maxCornerVal = self.heldCorners(board, 'B') + (.25 * self.closeCorners(board, 'W'))
+        minCornerVal = self.heldCorners(board, 'W') + (.25 * self.closeCorners(board, 'B'))
         total = maxCornerVal + minCornerVal
-        total = abs(total)
 
         if total != 0:
             return ((maxCornerVal - minCornerVal) / total) * 100
