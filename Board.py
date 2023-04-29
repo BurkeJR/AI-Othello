@@ -3,14 +3,11 @@ from AI import ai
 
 
 class board:
-    def __init__(self, blank = False, blackAI: ai = None, whiteAI: ai = None):
+    def __init__(self, blackAI: ai = None, whiteAI: ai = None):
         """8x8 board with starting pieces of
         W B
         B W"""
-        if blank:
-            self.gameBoard = [[piece((row, col)) for col in range(8)] for row in range(8)]
-        else:
-            self.gameBoard: list[list[piece]] = self.makeBoard()
+        self.gameBoard: list[list[piece]] = self.makeBoard()
 
         if blackAI == None:
             self.isAI = False

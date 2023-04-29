@@ -1,9 +1,9 @@
 from Board import board
-from Heuristic import coinParity
+from Heuristic import coinParity, cornersCaptured
 import copy
 
 def main():
-    blackAI = coinParity()
+    blackAI = cornersCaptured()
     whiteAI = coinParity()
     bestBoard: board = board(blackAI=blackAI, whiteAI=whiteAI)
     
@@ -36,23 +36,23 @@ def minimax(game: board, depth) -> board:
         return minimax(game, depth + 1)
     
     if game.currentPlayer == 'B':
-        max = 0
+        max = -100
         bestBoard = game
         for b in derivedBoards(game):
             b.currentPlayer = 'W'
             bestBoard = minimax(b,depth + 1)
-            val = evaluate(bestBoard)
+            val = game.blackAI.evaluate(bestBoard)
             if val > max:
                 max = val
                 bestBoard = b
         return bestBoard
     else:
-        min = 8*8
+        min = 100
         bestBoard = game
         for b in derivedBoards(game):
             b.currentPlayer = 'B'
             bestBoard = minimax(b,depth + 1)
-            val = evaluate(bestBoard)
+            val = game.whiteAI.evaluate(bestBoard)
             if val < min:
                 min = val
                 bestBoard = b
@@ -68,25 +68,5 @@ def derivedBoards(game: board) -> list[board]:
         boardList.append(newBoard)
 
     return boardList
-
-
-    
-
-
-def evaluate(game: board) -> int:
-    """If white, returns number of white tiles
-    If black, returns fraction of tiles that are """
-    if game.currentPlayer == 'W':
-        return count(game, 'W')
-    else:
-        return count(game, 'B')
-
-def count(game: board, color):
-    count = 0
-    for row in game.gameBoard:
-        for val in row:
-            if val == color:
-                count += 1
-    return count
 
 main()
