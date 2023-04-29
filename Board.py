@@ -1,8 +1,9 @@
 from Piece import piece
+from AI import ai
 
 
 class board:
-    def __init__(self, blank = False):
+    def __init__(self, blank = False, blackAI: ai = None, whiteAI: ai = None):
         """8x8 board with starting pieces of
         W B
         B W"""
@@ -10,7 +11,16 @@ class board:
             self.gameBoard = [[piece((row, col)) for col in range(8)] for row in range(8)]
         else:
             self.gameBoard: list[list[piece]] = self.makeBoard()
-        self.currentPlayer = 'W'
+
+        if blackAI == None:
+            self.isAI = False
+        else:
+            self.isAI = True
+        
+        self.blackAI = blackAI
+        self.whiteAI = whiteAI            
+        self.currentPlayer = 'B'
+        self.continueGame = True
 
 
     def makeBoard(self) -> list[list[piece]]:
@@ -91,8 +101,11 @@ class board:
     
     
     def __str__(self):
-        stringBuilder: str = ""
+        stringBuilder: str = "A B C D E F G H\n"
+        count = 1
         for row in self.gameBoard:
+            stringBuilder += str(count) + ' '
+            count += 1
             for val in row:
                 stringBuilder += str(val) + ' '
             stringBuilder += '\n'
@@ -106,4 +119,32 @@ class board:
             for val in row:
                 if val == '*':
                     return False
+        return True
+                
+    def isWon(self):
+        countAll = 0
+        countW = 0
+        countB = 0
+        for row in self.gameBoard:
+            for val in row:
+                if val == 'W':
+                    countAll += 1
+                    countW += 1
+                elif val == 'B':
+                    countAll += 1
+                    countB += 1
+
+        if countW == countAll:
+            return True
+        if countB == countAll:
+            return True
+        return False
+        
+    def noMoves(self):
+        for spots in self.getAllPlayableSpots():
+            if len(spots) == 1:
+                continue
+            else:
+                return False
+        return True
     

@@ -3,44 +3,41 @@ from Piece import piece
 import copy
 
 def main():
-    gameBoard: board = board()
+    bestBoard: board = board()
+    
 
-    bestBoard = minimax(gameBoard, 0)
+    while bestBoard.continueGame:
+        bestBoard = minimax(bestBoard, 0)
+        print(bestBoard)
+    
+    score = f"{count(bestBoard, 'B')} - {count(bestBoard, 'W')}"
 
     print(bestBoard)
 
-MAX_DEPTH = 4
+    print(score)
+
+MAX_DEPTH = 5
 
 def minimax(game: board, depth) -> board:
-    if game.isFull() or depth == MAX_DEPTH:
-        if game.currentPlayer == 'W':
-            #Max
-            max = 0
-            bestBoard = board(blank = True)
-            for b in derivedBoards(game):
-                b.currentPlayer = 'B'
-                val = evaluate(b)
-                if val > max:
-                    max = val
-                    bestBoard = b
-            return bestBoard
-        else:
-            #Min
-            min = 8 * 8
-            bestBoard = board(blank = True)
-            for b in derivedBoards(game):
-                b.currentPlayer = 'W'
-                val = evaluate(b)
-                if val < min:
-                    min = val
-                    bestBoard = b
-            return bestBoard
+    if depth == MAX_DEPTH:
+        return game
+
+    if game.isWon() or game.isFull():
+        game.continueGame = False
+        return game
     
-    if game.currentPlayer == 'W':
+    if game.noMoves():
+        if game.currentPlayer == 'W':
+            game.currentPlayer = 'B'
+        else:
+            game.currentPlayer = 'W'
+        return minimax(game, depth + 1)
+    
+    if game.currentPlayer == 'B':
         max = 0
-        bestBoard = board(blank = True)
+        bestBoard = game
         for b in derivedBoards(game):
-            b.currentPlayer = 'B'
+            b.currentPlayer = 'W'
             bestBoard = minimax(b,depth + 1)
             val = evaluate(bestBoard)
             if val > max:
@@ -49,9 +46,9 @@ def minimax(game: board, depth) -> board:
         return bestBoard
     else:
         min = 8*8
-        bestBoard = board(blank = True)
+        bestBoard = game
         for b in derivedBoards(game):
-            b.currentPlayer = 'W'
+            b.currentPlayer = 'B'
             bestBoard = minimax(b,depth + 1)
             val = evaluate(bestBoard)
             if val < min:
@@ -89,8 +86,5 @@ def count(game: board, color):
             if val == color:
                 count += 1
     return count
-
-
-
 
 main()
