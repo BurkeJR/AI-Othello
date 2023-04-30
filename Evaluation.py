@@ -18,7 +18,7 @@ def main():
         for j in range(len(wAI)):
             blackAI = bAI[i]
             whiteAI = wAI[j]
-            driver = aiDriver(blackAI, whiteAI, MAX_DEPTH=6, wordy=False)
+            driver = aiDriver(blackAI, whiteAI, MAX_DEPTH=5, wordy=False)
             results[i+1][j+1] = driver.run()
     end = time.time()
     print(results)
