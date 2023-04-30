@@ -1,5 +1,6 @@
 from Heuristic import coinParity, cornersCaptured, mobility, stability
 from AIDriver import aiDriver
+from PlayerDriver import player
 import time
 
 def main():
@@ -75,8 +76,8 @@ def main():
         end = time.time()
         print(f"runtime = {(end-start)}")
     else:
-        #TODO: allow user to manually play game
-        print("Selected manual Othello game")
+        driver = player()
+        print(driver.run())
         
 
 main()
