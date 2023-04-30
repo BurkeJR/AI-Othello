@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
+from Piece import piece
+from Board import board
 import copy
+
 
 def count(game, color):
         count = 0
@@ -64,8 +67,10 @@ class cornersCaptured(heuristic):
         return count
 		    
     def evaluate(self, board) -> int:
-        maxCornerVal = self.heldCorners(board, 'B') + (.25 * self.closeCorners(board, 'W'))
-        minCornerVal = self.heldCorners(board, 'W') + (.25 * self.closeCorners(board, 'B'))
+        closeW = self.closeCorners(board, 'W')
+        closeB = self.closeCorners(board, 'B')
+        maxCornerVal = self.heldCorners(board, 'B') + (.25 * closeW) - (.25 * closeB)
+        minCornerVal = self.heldCorners(board, 'W') + (.25 * closeB) - (.25 * closeW)
         total = maxCornerVal + minCornerVal
 
         if total != 0:
@@ -78,10 +83,10 @@ class cornersCaptured(heuristic):
 class mobility(heuristic):
     def evaluate(self, board) -> int:
         maxCount = self.numMoves(board, 'B')
-        maxCount += .25 * self.emptySpaces(board, 'B')
+        maxCount += .1 * self.emptySpaces(board, 'B')
 
         minCount = self.numMoves(board, 'W')
-        minCount += .25 * self.emptySpaces(board, 'W')
+        minCount += .1 * self.emptySpaces(board, 'W')
 
         total = maxCount + minCount
 
@@ -135,6 +140,112 @@ class mobility(heuristic):
     def __str__(self) -> str:
         return "Mobility"
 
-    
-            
+class stability(heuristic):
+    def evaluate(self, board) -> int:
+        board = copy.deepcopy(board)
+        maxCount =  4 * self.stableCount(board, 'B')
+        maxCount -= 2 * self.unstableCount(board, 'W') #2 modifier to account for 1 in stableCount
+
         
+        minCount = 4 * self.stableCount(board, 'W')
+        minCount -= 2 * self.unstableCount(board, 'B') #2 modifier to account for 1 in stableCount
+
+        total = maxCount + minCount
+
+        if total == 0:
+            return 0
+
+        return ((maxCount - minCount) / total) * 100 
+    
+    def stableCount(self, board: board, color):
+        count = 0
+        board.currentPlayer = color
+
+        for row in board.gameBoard:
+            for val in row:
+                if val == color:
+                    if self.checkStability(board, val.location, color):
+                        #Stable tiles are worth 4
+                        count += 1
+                    else:
+                        #Semi or Unstable worth 1
+                        #Makes Unstable worth -1 once final calculation done
+                        count += .25
+
+        return count
+    
+    def checkStability(self, board: board, location: tuple, color):
+        startRow, startCol = location
+        grid = board.gameBoard
+
+        rowStable = False
+        colStable = False
+
+        row = startRow
+        col = startCol
+        
+        if row == 0 or row == 7:
+            colStable = True
+        if col == 0 or col == 7:
+            rowStable = True
+        
+        while not rowStable:
+            #Move left
+            col -= 1
+            if col < 0:
+                rowStable = True
+                break
+            if grid[row][col] != color:
+                break
+            
+        row = startRow
+        col = startCol
+        while not rowStable:
+            #Move Right
+            col += 1
+            if col > 7:
+                rowStable = True
+                break
+            if grid[row][col] != color:
+                break
+        
+
+        row = startRow
+        col = startCol
+        while not colStable:
+            #Move Up
+            row -= 1
+            if row < 0:
+                colStable = True
+                break
+            if grid[row][col] != color:
+                break
+        
+        row = startRow
+        col = startCol
+        while not colStable:
+            #Move Down
+            row += 1
+            if row > 7:
+                colStable = True
+                break
+            if grid[row][col] != color:
+                break
+
+        return rowStable and colStable
+    
+    def unstableCount(self, board: board, color: str):
+        count = 0
+        board.currentPlayer = color
+        unstable = set()
+        for spot in board.getAllPlayableSpots():
+            if len(spot) == 1: continue
+
+            for location in spot:
+                unstable.add(location)
+            count += 1
+
+        return len(unstable) - count
+    
+    def __str__(self) -> str:
+        return "Stability"
