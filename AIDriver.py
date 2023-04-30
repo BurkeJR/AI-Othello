@@ -4,10 +4,11 @@ import copy
 
 
 class aiDriver():
-    def __init__(self, blackAI, whiteAI, MAX_DEPTH = 5) -> None:
+    def __init__(self, blackAI, whiteAI, MAX_DEPTH = 5, wordy = True) -> None:
         self.blackAI = blackAI
         self.whiteAI  = whiteAI
         self.MAX_DEPTH = MAX_DEPTH
+        self.wordy = wordy
     
     def run(self) -> str:
         stringBuilder: str = ""
@@ -15,9 +16,10 @@ class aiDriver():
 
         while bestBoard.continueGame:
             bestBoard = self.minimax(bestBoard, 0, -10000, 10000)
-            stringBuilder += str(bestBoard)
-            stringBuilder += str(bestBoard.blackAI.evaluate(bestBoard))
-            stringBuilder += '\n\n'
+            if (self.wordy):
+                stringBuilder += str(bestBoard)
+                stringBuilder += str(bestBoard.blackAI.evaluate(bestBoard))
+                stringBuilder += '\n\n'
     
         stringBuilder += f"{count(bestBoard, 'B')} - {count(bestBoard, 'W')}"
 
