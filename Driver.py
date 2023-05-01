@@ -1,4 +1,4 @@
-from Heuristic import coinParity, cornersCaptured, mobility, stability
+from Heuristic import coinParity, cornersCaptured, mobility, stability, combination
 from AIDriver import aiDriver
 from PlayerDriver import player
 import time
@@ -12,10 +12,10 @@ def main():
     if response == 'AI':
         blackAI = None
         print("\nChoose black's AI")
-        black = input("Coin Parity -> 'Coin'\nCorners Captured -> 'Corner'\nMobility -> 'Mobility'\nStability -> 'Stability'\n")
-        while black != 'Coin' and black != 'Corner' and black != 'Mobility' and black != 'Stability':
-            print("\nError, invalid input, please enter either 'Coin', 'Corner', 'Mobility' or 'Stability'")
-            black = input("Coin Parity -> 'Coin'\nCorners Captured -> 'Corner'\nMobility -> 'Mobility'\nStability -> 'Stability'\n")
+        black = input("Coin Parity -> 'Coin'\nCorners Captured -> 'Corner'\nMobility -> 'Mobility'\nStability -> 'Stability'\nCombination -> 'Combination'\n")
+        while black != 'Coin' and black != 'Corner' and black != 'Mobility' and black != 'Stability' and black != 'Combination':
+            print("\nError, invalid input, please enter either 'Coin', 'Corner', 'Mobility', 'Stability' or 'Combination'")
+            black = input("Coin Parity -> 'Coin'\nCorners Captured -> 'Corner'\nMobility -> 'Mobility'\nStability -> 'Stability'\nCombination -> 'Combination'\n")
         
         if black == 'Coin':
             blackAI = coinParity()
@@ -25,6 +25,8 @@ def main():
             blackAI = mobility()
         elif black == 'Stability':
             blackAI = stability()
+        elif black == 'Combination':
+            blackAI = combination()
         else:
             # Should never reach here, just in case sets to coinParity
             print("\nError in selecting AI, automatically set black's AI to Coin Parity")
@@ -32,10 +34,10 @@ def main():
         
         whiteAI = None
         print("\nChoose white's AI")
-        white = input("Coin Parity -> 'Coin'\nCorners Captured -> 'Corner'\nMobility -> 'Mobility'\nStability -> 'Stability'\n")
-        while white != 'Coin' and white != 'Corner' and white != 'Mobility' and white != 'Stability':
-            print("\nError, invalid input, please enter either 'Coin', 'Corner', 'Mobility' or 'Stability'")
-            white = input("Coin Parity -> 'Coin'\nCorners Captured -> 'Corner'\nMobility -> 'Mobility'\nStability -> 'Stability'\n")
+        white = input("Coin Parity -> 'Coin'\nCorners Captured -> 'Corner'\nMobility -> 'Mobility'\nStability -> 'Stability'\nCombination -> 'Combination'\n")
+        while white != 'Coin' and white != 'Corner' and white != 'Mobility' and white != 'Stability' and white != 'Combination':
+            print("\nError, invalid input, please enter either 'Coin', 'Corner', 'Mobility', 'Stability' or 'Combination'")
+            white = input("Coin Parity -> 'Coin'\nCorners Captured -> 'Corner'\nMobility -> 'Mobility'\nStability -> 'Stability'\nCombination -> 'Combination'\n")
         
         if white == 'Coin':
             whiteAI = coinParity()
@@ -45,6 +47,8 @@ def main():
             whiteAI = mobility()
         elif white == 'Stability':
             whiteAI = stability()
+        elif white == 'Combination':
+            whiteAI = combination()
         else:
             # Should never reach here, just in case sets to coinParity
             print("Error in selecting AI, automatically set white's AI to Coin Parity")

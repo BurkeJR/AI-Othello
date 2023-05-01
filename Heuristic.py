@@ -249,3 +249,11 @@ class stability(heuristic):
     
     def __str__(self) -> str:
         return "Stability"
+    
+class combination(heuristic):
+    def evaluate(self, board) -> int:
+        coin = coinParity()
+        corner = cornersCaptured()
+        mobile = mobility()
+        stable = stability()
+        return ((.3 * coin.evaluate(board)) + (.05 * mobile.evaluate(board)) + (.25 * stable.evaluate(board)) + (.25 * corner.evaluate(board))) / .85
